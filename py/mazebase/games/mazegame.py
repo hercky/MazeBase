@@ -508,6 +508,99 @@ class RewardOnEndMixin(BaseMazeGame):
         # last turn penalty not counted
 
 
+#############################################################################################
+#############################################################################################
+#############################################################################################
+
+
+class WithWaterBlocksTrapsMixin(BaseMazeGame):
+    ''' Subcassing this game will generate random blocks and water '''
+    __properties = dict(
+        waterpct= 0.1,
+        blockpct= 0.1,
+        trappct = 0.1, # % chance that a tile will contain a trap
+        water_penalty = 0.3,
+        trap_penalty = 1,
+    )
+
+    def __init__(self, **kwargs):
+        mazeutils.populate_kwargs(self, self.__class__.__properties, kwargs)
+        super(WithWaterBlocksTrapsMixin, self).__init__(**kwargs)
+
+    def _reset(self):
+        super(WithWaterBlocksTrapsMixin, self)._reset()
+        creationutils.sprinkle(self, [(mi.Block, self.blockpct),
+                                        (mi.Trap, self.trappct),  
+                                        (mi.Water, self.waterpct),])
+
+    def _get_reward(self, id):
+        reward = super(WithWaterBlocksTrapsMixin, self)._get_reward(id)
+        
+        # if water give small negative reward
+        if self._tile_get_block(self._items[id].location, mi.Water) is not None:
+            reward += -self.water_penalty
+
+        # if trap here give trap penalty
+        if self._tile_get_block(self._items[id].location, mi.Trap) is not None:
+            reward += -self.trap_penalty
+
+            # remove the trap block here then
+            self._remove_item(self._tile_get_block(self._items[id].location, mi.Trap).id)
+
+        return reward
+
+    def _accumulate_approximate_rewards(self):
+        super(WithWaterBlocksTrapsMixin, self)._accumulate_approximate_rewards()
+        for x, y in product(range(self.width), range(self.height)):
+
+            # get approx rewards here
+            if self._tile_get_block((x, y), mi.Water) is not None:
+                self._approx_reward_map[x][y] += -self.water_penalty
+
+
+
+
+
+class WithWaterBlocksChestsMixin(BaseMazeGame):
+    ''' Subcassing this game will generate random blocks and water '''
+    __properties = dict(
+        blockpct= 0.2,
+        chestpct = 0.2, # % chance that a tile will contain a chest
+        chest_reward = +1,
+    )
+
+    def __init__(self, **kwargs):
+        mazeutils.populate_kwargs(self, self.__class__.__properties, kwargs)
+        super(WithWaterBlocksChestsMixin, self).__init__(**kwargs)
+
+    def _reset(self):
+        super(WithWaterBlocksChestsMixin, self)._reset()
+        creationutils.sprinkle(self, [(mi.Block, self.blockpct),
+                                        (mi.Chest, self.chestpct), ])
+
+    def _get_reward(self, id):
+        reward = super(WithWaterBlocksChestsMixin, self)._get_reward(id)
+        
+        # if chest here give chest reward
+        if self._tile_get_block(self._items[id].location, mi.Chest) is not None:
+            reward += self.chest_reward
+
+            # remove the chest block here then
+            self._remove_item(self._tile_get_block(self._items[id].location, mi.Chest).id)
+
+        return reward
+
+    def _accumulate_approximate_rewards(self):
+        super(WithWaterBlocksChestsMixin, self)._accumulate_approximate_rewards()
+
+
+
+
+#############################################################################################
+#############################################################################################
+#############################################################################################
+#############################################################################################
+
 class BaseVocabulary(BaseMazeGame):
     '''All the cross-game vocabulary that's needed for most games. Try to add
     as little to this as possible. Presumably games not based off of the

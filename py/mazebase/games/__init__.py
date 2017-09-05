@@ -5,6 +5,8 @@ from .mazegame import (
     RewardOnEndMixin,
     AbsoluteLocationVocabulary,
     BaseVocabulary,
+    WithWaterBlocksTrapsMixin,
+    WithWaterBlocksChestsMixin,
 )
 from .goal_based_games import (
     SingleGoal,
@@ -20,4 +22,6 @@ from .blocks_switches_games import (
     Switches,
     LightKey,
     BlockedDoor,
+    TrapKey,
+    ChestKey,
 )

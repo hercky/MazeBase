@@ -15,6 +15,9 @@ class HasStatesMixin(object):
 
 
 class Block(MazeItem):
+    """
+    an impassible obstacle that does not allow the agent to move to that grid location
+    """
     def __init__(self, **kwargs):
         super(Block, self).__init__(passable=False, **kwargs)
 
@@ -23,6 +26,9 @@ class Block(MazeItem):
 
 
 class Water(MazeItem):
+    """
+    the agent may move to a grid location with water, but incurs an additional cost of for doing so.
+    """
     def __init__(self, **kwargs):
         super(Water, self).__init__(**kwargs)
         self.PRIO = -100
@@ -32,6 +38,9 @@ class Water(MazeItem):
 
 
 class Corner(MazeItem):
+    """
+    This item simply marks a corner of the board.
+    """
     def __init__(self, **kwargs):
         super(Corner, self).__init__(**kwargs)
 
@@ -40,6 +49,9 @@ class Corner(MazeItem):
 
 
 class Goal(MazeItem):
+    """
+     depending on the task, one or more goals may exist, each named individually.
+    """
     __MAX_GOAL_IDS = 10
 
     def __init__(self, id=0, **kwargs):
@@ -126,3 +138,63 @@ class Door(HasStatesMixin, MazeItem):
     def all_features(cls):
         return super(Door, cls).all_features() +\
             ["open", "closed"]
+
+
+class Chest(HasStatesMixin, MazeItem):
+    """
+    have an action pick pick / toggle which agent can use to pick stuff 
+    """
+    def __init__(self, available=True, state=0, **kwargs):
+        super(Chest, self).__init__(**kwargs)
+        self.isavailable = available
+        self.state = state
+
+        
+    def _get_display_symbol(self):
+        return (None if not self.isavailable else u'$ $', 'grey', 'on_yellow', None)
+
+    def pick(self):
+        # pick the item, change the state of the object
+        self.isavailable = False
+        self.state = 1
+
+    def featurize(self):
+        return super(Chest, self).featurize() + \
+            ["available" if self.isavailable else "notavailable", self.STATE_FEATURE[self.state]]
+
+
+    @classmethod
+    def all_features(cls):
+        return super(Chest, cls).all_features() +\
+            ["available", "notavailable"]
+
+
+class Trap(HasStatesMixin, MazeItem):
+    """
+    oppposite of chest
+    have an action pick pick / toggle which agent can use to pick stuff 
+    """
+    def __init__(self, available=True,  state=0, **kwargs):
+        super(Trap, self).__init__(**kwargs)
+        self.isavailable = available
+        self.state = state
+
+        
+    def _get_display_symbol(self):
+        return ( None if not self.isavailable else u'x x', 'grey', 'on_magenta', None)
+
+    def pick(self):
+        # pick the item, change the state of the object
+        self.isavailable = False
+        self.state = 1
+
+    def featurize(self):
+        return super(Trap, self).featurize() + \
+            ["available" if self.isavailable else "notavailable", self.STATE_FEATURE[self.state]]
+
+    @classmethod
+    def all_features(cls):
+        return super(Trap, cls).all_features() +\
+            ["available", "notavailable"]
+
+

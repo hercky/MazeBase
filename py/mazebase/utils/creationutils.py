@@ -35,6 +35,8 @@ def sprinkle(game, tiles, tilemask=None):
     return ids
 
 
+
+
 def empty_locations(game, bad_blocks=None, mask=lambda x, y: True):
     '''By default, finds empty locations in the map.
     If bad_blocks is not none, then finds locations without any bad_blocks,

@@ -8,4 +8,6 @@ from .terrain import (
     Pushable,
     Switch,
     Door,
+    Trap,
+    Chest,
 )

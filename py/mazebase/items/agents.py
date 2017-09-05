@@ -160,3 +160,49 @@ class Toggling(Agent):
         switch = self.game._tile_get_block((x, y), mi.Switch)
         if switch is not None:
             switch.toggle()
+
+class SingleTileTriggerMovable(Agent):
+    ''' Can move up, down, left, and right 1 tile per turn '''
+    def __init__(self, **kwargs):
+        super(SingleTileTriggerMovable, self).__init__(**kwargs)
+
+        self._add_action("up", self.__up)
+        self._add_action("down", self.__down)
+        self._add_action("left", self.__left)
+        self._add_action("right", self.__right)
+
+    def __dmove(self, dx, dy):
+        x, y = self.location
+        nloc = x + dx, y + dy
+        # Cannot walk into blocks, agents, or closed doors
+        if (self.game._tile_get_block(nloc, mi.Block) is None and
+                self.game._tile_get_block(nloc, Agent) is None and
+                (not self.game._tile_get_block(nloc, mi.Door) or
+                 self.game._tile_get_block(nloc, mi.Door).isopen)):
+            self.game._move_item(self.id, location=nloc)
+
+            # if you can move to the new block then trigger chest or trap here
+            # if self.game._tile_get_block(nloc, mi.Chest) is not None:
+            #     chest = self.game._tile_get_block(nloc, mi.Chest)
+            #     chest.pick()
+            #     # can delete the item here also
+            #     # self.game._remove_item(chest_id)
+
+            # elif self.game._tile_get_block(nloc, mi.Trap) is not None:
+            #     trap = self.game._tile_get_block(nloc, mi.Trap)
+            #     trap.pick()
+
+                # delete the trap after one use
+                #self.game._remove_item(trap.id)
+
+    def __up(self):
+        self.__dmove(0, 1)
+
+    def __down(self):
+        self.__dmove(0, -1)
+
+    def __left(self):
+        self.__dmove(-1, 0)
+
+    def __right(self):
+        self.__dmove(1, 0)
