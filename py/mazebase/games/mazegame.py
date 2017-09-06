@@ -324,7 +324,10 @@ class BaseMazeGame(object):
         # Circular dependencies
         import mazebase.games as games
         features = set()
-        modules = [mi, mi.agents, games]
+        
+        #modules = [mi, mi.agents, games]
+        modules = [mi, mi.agents]
+
         for mod in modules:
             for name, cls in mazeutils.all_classes_of(mod):
                 features.update(cls.all_features())
@@ -339,7 +342,8 @@ class BaseMazeGame(object):
         you don't need to touch this. If your map implements new features for
         side_info, then define a classmethod with the new features only.
         '''
-        return ['GAME', 'INFO', cls.__name__, '']
+        #return ['GAME', 'INFO', cls.__name__, '']
+        return [cls.__name__]
 
     def _get_items(self, location):
         # Get item list at a location in the maze, empty if out of buonds
