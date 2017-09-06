@@ -4,10 +4,6 @@ from .terrain import (
     Water,
     Corner,
     Goal,
-    Breadcrumb,
-    Pushable,
-    Switch,
-    Door,
     Trap,
     Chest,
 )

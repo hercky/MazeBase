@@ -68,99 +68,6 @@ class NPC(Agent):
         return (self.id, choice(self.actions))
 
 
-class SingleTileMovable(Agent):
-    ''' Can move up, down, left, and right 1 tile per turn '''
-    def __init__(self, **kwargs):
-        super(SingleTileMovable, self).__init__(**kwargs)
-
-        self._add_action("up", self.__up)
-        self._add_action("down", self.__down)
-        self._add_action("left", self.__left)
-        self._add_action("right", self.__right)
-
-    def __dmove(self, dx, dy):
-        x, y = self.location
-        nloc = x + dx, y + dy
-        # Cannot walk into blocks, agents, or closed doors
-        if (self.game._tile_get_block(nloc, mi.Block) is None and
-                self.game._tile_get_block(nloc, Agent) is None and
-                (not self.game._tile_get_block(nloc, mi.Door) or
-                 self.game._tile_get_block(nloc, mi.Door).isopen)):
-            self.game._move_item(self.id, location=nloc)
-
-    def __up(self):
-        self.__dmove(0, 1)
-
-    def __down(self):
-        self.__dmove(0, -1)
-
-    def __left(self):
-        self.__dmove(-1, 0)
-
-    def __right(self):
-        self.__dmove(1, 0)
-
-
-class BreadcrumbDropping(Agent):
-    ''' Can drop breadcrumbs as an action '''
-    def __init__(self, **kwargs):
-        super(BreadcrumbDropping, self).__init__(**kwargs)
-        self._add_action("breadcrumb", self.__drop_crumb)
-
-    def __drop_crumb(self):
-        if self.game._tile_get_block(self.location, mi.Breadcrumb) is None:
-            self.game._add_item(mi.Breadcrumb(location=self.location))
-
-
-class Pushing(Agent):
-    '''
-    Can push in the 4 cardinal directions. Pushing moves Pushable objects
-    in one of four directions if there's no collision.
-    '''
-    def __init__(self, **kwargs):
-        super(Pushing, self).__init__(**kwargs)
-        self._add_action("push_up", self.__push_up)
-        self._add_action("push_down", self.__push_down)
-        self._add_action("push_left", self.__push_left)
-        self._add_action("push_right", self.__push_right)
-
-    def __dpush(self, dx, dy):
-        x, y = self.location
-        tx, ty = x + dx, y + dy
-        nx, ny = tx + dx, ty + dy
-
-        # Cannot push into other blocks or agents
-        block = self.game._tile_get_block((tx, ty), mi.Pushable)
-        if (block is not None and
-                self.game._tile_get_block((nx, ny), Agent) is None and
-                self.game._tile_get_block((nx, ny), mi.Block) is None):
-            self.game._move_item(block.id, location=(nx, ny))
-
-    def __push_up(self):
-        self.__dpush(0, 1)
-
-    def __push_down(self):
-        self.__dpush(0, -1)
-
-    def __push_left(self):
-        self.__dpush(-1, 0)
-
-    def __push_right(self):
-        self.__dpush(1, 0)
-
-
-class Toggling(Agent):
-    ''' Can toggle on current space '''
-    def __init__(self, **kwargs):
-        super(Toggling, self).__init__(**kwargs)
-        self._add_action("toggle_switch", self.__toggle)
-
-    def __toggle(self):
-        x, y = self.location
-        switch = self.game._tile_get_block((x, y), mi.Switch)
-        if switch is not None:
-            switch.toggle()
-
 class SingleTileTriggerMovable(Agent):
     ''' Can move up, down, left, and right 1 tile per turn '''
     def __init__(self, **kwargs):
@@ -176,9 +83,7 @@ class SingleTileTriggerMovable(Agent):
         nloc = x + dx, y + dy
         # Cannot walk into blocks, agents, or closed doors
         if (self.game._tile_get_block(nloc, mi.Block) is None and
-                self.game._tile_get_block(nloc, Agent) is None and
-                (not self.game._tile_get_block(nloc, mi.Door) or
-                 self.game._tile_get_block(nloc, mi.Door).isopen)):
+                self.game._tile_get_block(nloc, Agent) is None ):
             self.game._move_item(self.id, location=nloc)
 
             # if you can move to the new block then trigger chest or trap here
