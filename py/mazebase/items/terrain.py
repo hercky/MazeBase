@@ -140,61 +140,24 @@ class Door(HasStatesMixin, MazeItem):
             ["open", "closed"]
 
 
-class Chest(HasStatesMixin, MazeItem):
+class Chest(MazeItem):
     """
     have an action pick pick / toggle which agent can use to pick stuff 
     """
-    def __init__(self, available=True, state=0, **kwargs):
+    def __init__(self, **kwargs):
         super(Chest, self).__init__(**kwargs)
-        self.isavailable = available
-        self.state = state
-
         
     def _get_display_symbol(self):
-        return (None if not self.isavailable else u'$ $', 'grey', 'on_yellow', None)
-
-    def pick(self):
-        # pick the item, change the state of the object
-        self.isavailable = False
-        self.state = 1
-
-    def featurize(self):
-        return super(Chest, self).featurize() + \
-            ["available" if self.isavailable else "notavailable", self.STATE_FEATURE[self.state]]
+        return (u'$ $', 'grey', 'on_yellow', None)
 
 
-    @classmethod
-    def all_features(cls):
-        return super(Chest, cls).all_features() +\
-            ["available", "notavailable"]
-
-
-class Trap(HasStatesMixin, MazeItem):
+class Trap(MazeItem):
     """
     oppposite of chest
     have an action pick pick / toggle which agent can use to pick stuff 
     """
-    def __init__(self, available=True,  state=0, **kwargs):
+    def __init__(self, **kwargs):
         super(Trap, self).__init__(**kwargs)
-        self.isavailable = available
-        self.state = state
-
         
     def _get_display_symbol(self):
-        return ( None if not self.isavailable else u'x x', 'grey', 'on_magenta', None)
-
-    def pick(self):
-        # pick the item, change the state of the object
-        self.isavailable = False
-        self.state = 1
-
-    def featurize(self):
-        return super(Trap, self).featurize() + \
-            ["available" if self.isavailable else "notavailable", self.STATE_FEATURE[self.state]]
-
-    @classmethod
-    def all_features(cls):
-        return super(Trap, cls).all_features() +\
-            ["available", "notavailable"]
-
-
+        return (u'x x', 'grey', 'on_magenta', None)

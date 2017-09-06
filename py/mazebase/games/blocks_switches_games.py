@@ -395,9 +395,9 @@ def add_4_walls(game, margin = 1 ):
     # x_line, y _line 
 
     # get the four opening here
-    wall_openings = [   (randint(0, x_line), y_line), 
+    wall_openings = [   (randint(0, x_line - 1), y_line), 
                         (randint(x_line + 1, size[0] - 1), y_line),
-                        (x_line, randint(0, y_line)),
+                        (x_line, randint(0, y_line - 1)),
                         (x_line, randint(y_line + 1, size[1] - 1)),
                     ]
 
@@ -439,7 +439,7 @@ class TrapKey(PBS2Type):
         # ad blocks on the holes temporarily
         blocked_holes = []
         for i in range(len(holes)):
-            blocked_holes.append(mi.Block(location=  holes[i]))
+            blocked_holes.append(mi.Block(location= holes[i]))
             self._add_item(blocked_holes[i])
 
         # Add additional blocks and waters 
@@ -508,7 +508,7 @@ class ChestKey(RewardOnEndMixin, WithWaterBlocksChestsMixin, BaseVocabulary):
     
     # def __init__(self, **kwargs):
     #     populate_kwargs(self, self.__class__.__properties, kwargs)
-    #     super(TrapKey, self).__init__(**kwargs)
+    #     super(ChestKey, self).__init__(**kwargs)
 
     def _reset(self):
         intersection, holes = add_4_walls(self)
