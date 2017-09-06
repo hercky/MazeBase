@@ -24,7 +24,7 @@ tk = curriculum.CurriculumWrappedGame(
         'map_size': games.curriculum.MapSizeCurriculum(
             (10, 10, 10, 10),
             (10, 10, 10, 10),
-            (20, 20, 20, 20)
+            (10, 10, 10, 10)
         ),
     }
 )
@@ -37,7 +37,7 @@ ck = curriculum.CurriculumWrappedGame(
         'map_size': games.curriculum.MapSizeCurriculum(
             (10, 10, 10, 10),
             (10, 10, 10, 10),
-            (20, 20, 20, 20)
+            (10, 10, 10, 10)
         ),
     }
 )
